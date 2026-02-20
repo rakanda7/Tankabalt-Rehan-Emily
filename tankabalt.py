@@ -6,6 +6,13 @@ import pygame.locals
 
 WIDTH, HEIGHT = 500, 500
 
+class Character:
+    ...
+
+
+
+class Ground:
+    ...
 
 def main():
     fps = 60
