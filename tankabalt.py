@@ -12,7 +12,7 @@ class Character:
 
 
 class Ground:
-    
+    ...
 
 def main():
     fps = 60
