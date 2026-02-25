@@ -12,7 +12,6 @@ class Character:
 
 
 class Ground:
-    ...
     
     def __init__(self, screen: pygame.Surface) -> None:
         self.screen = screen
