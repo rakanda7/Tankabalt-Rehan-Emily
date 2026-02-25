@@ -10,8 +10,8 @@ class Character:
     ...
 
 
-
 class Ground:
+    ...
     
 
 def main():
