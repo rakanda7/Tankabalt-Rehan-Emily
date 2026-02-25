@@ -4,11 +4,10 @@ import pygame
 import pygame.locals
 
 
-WIDTH, HEIGHT = 500, 500
+WIDTH, HEIGHT = 850, 650
 
 class Character:
     ...
-
 
 
 class Ground:
