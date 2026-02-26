@@ -67,7 +67,8 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    ground = [Ground(screen) for i in range(1,100)]
+    g_one = Ground(screen)
+    g_two = Ground(screen)
 
     while True:
         screen.fill("#000000")
