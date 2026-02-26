@@ -53,7 +53,7 @@ class Ground:
     def update(self) -> None:
         self.x += self.vx
         if self.x + self.width < 0:
-            self.kill()
+            del(self)
 
     def display(self) -> None:
         pygame.draw.rect(self.screen, "#FF0000", (self.x, 600, self.width, 50))
