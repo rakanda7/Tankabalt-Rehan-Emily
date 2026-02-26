@@ -14,7 +14,7 @@ class Character:
         self.radius = 15
         self.velocity = 5
         self.color = "#FEFEFE" 
-        self.x = 20
+        self.x = 50
         self.y = y
     
     def motion(self) -> None:
@@ -37,7 +37,7 @@ class Character:
     def update(self) -> None:
         self.motion()
 
-    def draw(self) -> None:
+    def display(self) -> None:
         pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.radius)
 
 
@@ -67,8 +67,13 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
+<<<<<<< HEAD
     g_one = Ground(screen)
     g_two = Ground(screen)
+=======
+    ground = Ground(screen)
+    ball = Character(screen, 300)
+>>>>>>> 1fb31ebacd577ed417dfbe39bb0f4f103c84f06d
 
     while True:
         screen.fill("#000000")
@@ -81,6 +86,9 @@ def main():
         for g in ground:
             g.update()
             g.display()
+
+        ball.update()
+        ball.display()
 
         pygame.display.flip()
         fps_clock.tick(fps)
