@@ -3,6 +3,7 @@ import sys
 import pygame
 import pygame.locals
 import random
+import time
 
 
 WIDTH, HEIGHT = 900, 650
@@ -46,16 +47,19 @@ class Ground:
     def __init__(self, screen: pygame.Surface) -> None:
         self.screen = screen
         self.x = 920
-        self.vx = -2
+        self.vx = -5
         self.width = random.uniform(50,250)
 
     def update(self) -> None:
         self.x += self.vx
         if self.x + self.width < 0:
-            self.kill()
+            del(self)
 
     def display(self) -> None:
         pygame.draw.rect(self.screen, "#FF0000", (self.x, 600, self.width, 50))
+
+class Obstacle:
+    ...
 
 def main():
     fps = 60
@@ -63,7 +67,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    g = Ground(screen)
+    ground = Ground(screen)
     ball = Character(screen, 300)
 
     while True:
@@ -74,8 +78,9 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        g.update()
-        g.display()
+        for g in ground:
+            g.update()
+            g.display()
 
         ball.update()
         ball.display()
