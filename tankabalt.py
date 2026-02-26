@@ -27,6 +27,9 @@ class Ground:
     def display(self) -> None:
         pygame.draw.rect(self.screen, "#FF0000", (self.x, 600, self.width, 50))
 
+class Obstacle:
+    ...
+
 def main():
     fps = 60
     fps_clock = pygame.time.Clock()
