@@ -3,6 +3,7 @@ import sys
 import pygame
 import pygame.locals
 import random
+import time
 
 
 WIDTH, HEIGHT = 900, 650
@@ -16,7 +17,7 @@ class Ground:
     def __init__(self, screen: pygame.Surface) -> None:
         self.screen = screen
         self.x = 920
-        self.vx = -2
+        self.vx = -5
         self.width = random.uniform(50,250)
 
     def update(self) -> None:
@@ -36,7 +37,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    g = Ground(screen)
+    ground = [Ground(screen) for i in range(1,100)]
 
     while True:
         screen.fill("#000000")
@@ -46,8 +47,9 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        g.update()
-        g.display()
+        for g in ground:
+            g.update()
+            g.display()
 
         pygame.display.flip()
         fps_clock.tick(fps)
