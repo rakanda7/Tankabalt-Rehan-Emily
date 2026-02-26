@@ -9,7 +9,37 @@ import time
 WIDTH, HEIGHT = 900, 650
 
 class Character:
-    ...
+    def __init__(self, screen: pygame.Surface, y: int) -> None:
+        self.screen = screen
+        self.radius = 15
+        self.velocity = 5
+        self.color = "#FEFEFE" 
+        self.x = 20
+        self.y = y
+    
+    def motion(self) -> None:
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_UP]:
+            self.y -= self.velocity
+        if keys[pygame.K_DOWN]:
+            self.y += self.velocity
+        
+        top = self.radius
+        bottom = self.screen.get_height() - self.radius
+        
+        # ball doesn't move off the screen
+        if self.y < top:
+            self.y = top
+        if self.y > bottom:
+            self.y = bottom
+    
+    def update(self) -> None:
+        self.motion()
+
+    def draw(self) -> None:
+        pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.radius)
+
 
 
 class Ground:
