@@ -42,7 +42,6 @@ class Character:
 
 
 class Ground:
-    ...
     
     def __init__(self, screen: pygame.Surface) -> None:
         self.screen = screen
@@ -56,7 +55,7 @@ class Ground:
             self.kill()
 
     def display(self) -> None:
-        pygame.draw.rectangle(self.screen, "#FF0000", (self.x, 600, self.width, 50))
+        pygame.draw.rect(self.screen, "#FF0000", (self.x, 600, self.width, 50))
 
 def main():
     fps = 60
@@ -64,7 +63,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    Ground(screen)
+    g = Ground(screen)
 
     while True:
         screen.fill("#000000")
@@ -73,6 +72,9 @@ def main():
             if event.type == pygame.locals.QUIT:
                 pygame.quit()
                 sys.exit()
+
+        g.update()
+        g.display()
 
         pygame.display.flip()
         fps_clock.tick(fps)
