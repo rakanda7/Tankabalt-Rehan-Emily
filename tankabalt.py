@@ -51,7 +51,7 @@ class Character:
         self.motion()
 
     def display(self) -> None:
-        pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.radius)
+        pygame.draw.circle(self.screen, self.color, (self.x, self.y - self.radius), self.radius)
 
 
 
@@ -93,8 +93,12 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        ground.update()
-        ground.display()
+        g_one.update()
+        g_one.display()
+        g_two.update()
+        g_two.display()
+        g_three.update()
+        g_three.display()
 
         ball.update()
         ball.display()
