@@ -12,27 +12,40 @@ class Character:
     def __init__(self, screen: pygame.Surface, y: int) -> None:
         self.screen = screen
         self.radius = 15
-        self.velocity = 5
         self.color = "#FEFEFE" 
+        
         self.x = 50
-        self.y = y
+
+        self.ground_y = 500
+        self.y = 500
+        self.vy = 0
+        self.jump_velocity = 18
+        self.gravity = 1
+        self.on_ground = True
+
+        self.prev_up_pressed = False
+
     
     def motion(self) -> None:
         keys = pygame.key.get_pressed()
+        up_pressed = keys[pygame.K_UP]
 
-        if keys[pygame.K_UP]:
-            self.y -= self.velocity
-        if keys[pygame.K_DOWN]:
-            self.y += self.velocity
+        if up_pressed and self.on_ground and not self.prev_up_pressed:
+            self.vy = -self.jump_velocity
+            self.on_ground = False
         
-        top = self.radius
-        bottom = self.screen.get_height() - self.radius
-        
-        # ball doesn't move off the screen
-        if self.y < top:
-            self.y = top
-        if self.y > bottom:
-            self.y = bottom
+        self.prev_up_pressed = up_pressed
+
+        # apply gravity and move
+        self.vy += self.gravity
+        self.y += self.vy
+
+        # ground collision
+        if self.y >= self.ground_y:
+            self.y = self.ground_y
+            self.vy = 0
+            self.on_ground = True
+
     
     def update(self) -> None:
         self.motion()
@@ -56,7 +69,7 @@ class Ground:
             del(self)
 
     def display(self) -> None:
-        pygame.draw.rect(self.screen, "#FF0000", (self.x, 600, self.width, 50))
+        pygame.draw.rect(self.screen, "#FF0000", (self.x, 500, self.width, 50))
 
 class Obstacle:
     ...
@@ -78,9 +91,8 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        for g in ground:
-            g.update()
-            g.display()
+        ground.update()
+        ground.display()
 
         ball.update()
         ball.display()
