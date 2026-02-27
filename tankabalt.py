@@ -80,9 +80,12 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        for g in ground:
-            g.update()
-            g.display()
+        g_one.update()
+        g_one.display()
+        g_two.update()
+        g_two.display()
+        g_three.update()
+        g_three.display()
 
         ball.update()
         ball.display()
