@@ -44,16 +44,16 @@ class Character:
 
 class Ground:
     
-    def __init__(self, screen: pygame.Surface) -> None:
+    def __init__(self, screen: pygame.Surface, x:int) -> None:
         self.screen = screen
-        self.x = 920
+        self.x = x
         self.vx = -5
-        self.width = random.uniform(50,250)
+        self.width = random.uniform(100,250)
 
     def update(self) -> None:
         self.x += self.vx
         if self.x + self.width < 0:
-            del(self)
+            self.x = 920
 
     def display(self) -> None:
         pygame.draw.rect(self.screen, "#FF0000", (self.x, 600, self.width, 50))
@@ -67,13 +67,10 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-<<<<<<< HEAD
-    g_one = Ground(screen)
-    g_two = Ground(screen)
-=======
-    ground = Ground(screen)
+    g_one = Ground(screen, 100)
+    g_two = Ground(screen, 500)
+    g_three = Ground(screen, 700)
     ball = Character(screen, 300)
->>>>>>> 1fb31ebacd577ed417dfbe39bb0f4f103c84f06d
 
     while True:
         screen.fill("#000000")
