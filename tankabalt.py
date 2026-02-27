@@ -23,22 +23,33 @@ class Character:
         self.gravity = 1
         self.on_ground = True
 
+        self.extra_jumps = 1
+        self.jumps_left = 1
+
         self.prev_up_pressed = False
 
         self.g_one = g_one
         self.g_two = g_two
         self.g_three = g_three
 
+    def jump(self) -> None:
+        self.vy = -self.jump_velocity
+        self.on_ground = False
     
     def motion(self) -> None:
         keys = pygame.key.get_pressed()
         up_pressed = keys[pygame.K_UP]
-
-        if up_pressed and self.on_ground and not self.prev_up_pressed:
-            self.vy = -self.jump_velocity
-            self.on_ground = False
+        just_pressed_up = up_pressed and not self.prev_up_pressed
         
         self.prev_up_pressed = up_pressed
+
+        # jumping (re-jumps mid-air if up pressed)
+        if just_pressed_up:
+            if self.on_ground:
+                self.jump()
+            elif self.jumps_left > 0:
+                self.jump()
+                self.jumps_left -= 1
 
         # apply gravity and move
         self.vy += self.gravity
@@ -55,6 +66,7 @@ class Character:
         ):
             self.y += self.gravity
             self.on_ground = True
+            self.jumps_left = self.extra_jumps
 
     
     def update(self) -> None:
