@@ -9,7 +9,7 @@ import time
 WIDTH, HEIGHT = 900, 650
 
 class Character:
-    def __init__(self, screen: pygame.Surface, y: int) -> None:
+    def __init__(self, screen: pygame.Surface, y: int, g_one, g_two, g_three) -> None:
         self.screen = screen
         self.radius = 15
         self.color = "#FEFEFE" 
@@ -24,6 +24,10 @@ class Character:
         self.on_ground = True
 
         self.prev_up_pressed = False
+
+        self.g_one = g_one
+        self.g_two = g_two
+        self.g_three = g_three
 
     
     def motion(self) -> None:
@@ -41,18 +45,24 @@ class Character:
         self.y += self.vy
 
         # ground collision
-        if self.y >= self.ground_y:
-            self.y = self.ground_y
-            self.vy = 0
+        if ( 
+            self.x >= self.g_one.x and 
+            self.x <= (self.g_one.x + self.g_one.width) and
+            self.x >= self.g_two.x and 
+            self.x <= (self.g_two.x + self.g_two.width) and
+            self.x >= self.g_three.x and 
+            self.x <= (self.g_three.x + self.g_three.width)
+        ):
+            self.y += self.gravity
             self.on_ground = True
 
     
     def update(self) -> None:
         self.motion()
 
+
     def display(self) -> None:
         pygame.draw.circle(self.screen, self.color, (self.x, self.y - self.radius), self.radius)
-
 
 
 class Ground:
