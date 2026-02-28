@@ -9,7 +9,7 @@ import time
 WIDTH, HEIGHT = 900, 650
 
 class Character:
-    def __init__(self, screen: pygame.Surface, y: int, g_one, g_two, g_three) -> None:
+    def __init__(self, screen: pygame.Surface, y: int) -> None:
         self.screen = screen
         self.radius = 15
         self.color = "#FEFEFE" 
@@ -17,56 +17,62 @@ class Character:
         self.x = 50
 
         self.ground_y = 500
-        self.y = 500
+        self.y = float(y)
         self.vy = 0
         self.jump_velocity = 18
         self.gravity = 1
-        self.on_ground = True
-
-        self.extra_jumps = 1
-        self.jumps_left = 1
 
         self.prev_up_pressed = False
 
-        self.g_one = g_one
-        self.g_two = g_two
-        self.g_three = g_three
+        # self.g_one = g_one
+        # self.g_two = g_two
+        # self.g_three = g_three
+    
+    def is_on_ground(self) -> bool:
+        return self.y >= self.ground_y and self.vy == 0
+    
+    def can_jump(self) -> bool:
+        return self.y > 2 * self.radius
 
     def jump(self) -> None:
         self.vy = -self.jump_velocity
-        self.on_ground = False
     
     def motion(self) -> None:
         keys = pygame.key.get_pressed()
         up_pressed = keys[pygame.K_UP]
         just_pressed_up = up_pressed and not self.prev_up_pressed
-        
         self.prev_up_pressed = up_pressed
 
-        # jumping (re-jumps mid-air if up pressed)
-        if just_pressed_up:
-            if self.on_ground:
-                self.jump()
-            elif self.jumps_left > 0:
-                self.jump()
-                self.jumps_left -= 1
+        # unlimited jumping (re-jumps mid-air if up pressed)
+        if just_pressed_up and self.can_jump():
+            self.jump()
 
         # apply gravity and move
         self.vy += self.gravity
         self.y += self.vy
 
+        # limit max height (cannot leave screen)
+        if self.y < self.radius:
+            self.y = self.radius
+            if self.vy < 0:
+                self.vy = 0.0
+
         # ground collision
-        if ( 
-            self.x >= self.g_one.x and 
-            self.x <= (self.g_one.x + self.g_one.width) and
-            self.x >= self.g_two.x and 
-            self.x <= (self.g_two.x + self.g_two.width) and
-            self.x >= self.g_three.x and 
-            self.x <= (self.g_three.x + self.g_three.width)
-        ):
-            self.y += self.gravity
-            self.on_ground = True
-            self.jumps_left = self.extra_jumps
+        if self.y > self.ground_y:
+            self.y = float(self.ground_y)
+            self.vy = 0.0
+            
+        # if ( 
+        #     self.x >= self.g_one.x and 
+        #     self.x <= (self.g_one.x + self.g_one.width) and
+        #     self.x >= self.g_two.x and 
+        #     self.x <= (self.g_two.x + self.g_two.width) and
+        #     self.x >= self.g_three.x and 
+        #     self.x <= (self.g_three.x + self.g_three.width)
+        # ):
+        #     self.y += self.gravity
+        #     self.on_ground = True
+        #     self.jumps_left = self.extra_jumps
 
     
     def update(self) -> None:
