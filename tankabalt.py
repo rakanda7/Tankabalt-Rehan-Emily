@@ -50,6 +50,7 @@ class Character:
             elif self.jumps_left > 0:
                 self.jump()
                 self.jumps_left -= 1
+        self.jumps_left = self.extra_jumps
 
         # apply gravity and move
         self.vy += self.gravity
@@ -65,8 +66,8 @@ class Character:
             self.x <= (self.g_three.x + self.g_three.width)
         ):
             self.y += self.gravity
-            self.on_ground = True
-            self.jumps_left = self.extra_jumps
+            self.on_ground = False
+            
 
     
     def update(self) -> None:
