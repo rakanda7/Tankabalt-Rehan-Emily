@@ -9,7 +9,7 @@ import time
 WIDTH, HEIGHT = 900, 650
 
 class Character:
-    def __init__(self, screen: pygame.Surface, y: int, g_one, g_two, g_three) -> None:
+    def __init__(self, screen: pygame.Surface, y: int, grounds) -> None:
         self.screen = screen
         self.radius = 15
         self.color = "#FEFEFE" 
@@ -28,15 +28,14 @@ class Character:
 
         self.prev_up_pressed = False
 
-        self.g_one = g_one
-        self.g_two = g_two
-        self.g_three = g_three
+        self.grounds = grounds
 
     def jump(self) -> None:
         self.vy = -self.jump_velocity
         self.on_ground = False
     
     def motion(self) -> None:
+        self.on_ground = False
         keys = pygame.key.get_pressed()
         up_pressed = keys[pygame.K_UP]
         just_pressed_up = up_pressed and not self.prev_up_pressed
@@ -53,20 +52,25 @@ class Character:
         self.jumps_left = self.extra_jumps
 
         # apply gravity and move
+        prev_y = self.y
         self.vy += self.gravity
         self.y += self.vy
+        
 
         # ground collision
-        if ( 
-            self.x >= self.g_one.x and 
-            self.x <= (self.g_one.x + self.g_one.width) and
-            self.x >= self.g_two.x and 
-            self.x <= (self.g_two.x + self.g_two.width) and
-            self.x >= self.g_three.x and 
-            self.x <= (self.g_three.x + self.g_three.width)
-        ):
-            self.y += self.gravity
-            self.on_ground = False
+        
+        for g in self.grounds:
+            if (
+                self.x >= g.x and
+                self.x <= g.x + g.width and
+                self.y >= 500 and
+                prev_y <= 500 and
+                self.vy > 0
+            ):
+                self.y = 500
+                self.vy = 0
+                self.on_ground = True
+                break
             
 
     
@@ -107,7 +111,8 @@ def main():
     g_one = Ground(screen, 0)
     g_two = Ground(screen, 500)
     g_three = Ground(screen, 900)
-    ball = Character(screen, 300)
+    grounds = [g_one, g_two, g_three]
+    ball = Character(screen, 300, grounds)
 
     while True:
         screen.fill("#000000")
