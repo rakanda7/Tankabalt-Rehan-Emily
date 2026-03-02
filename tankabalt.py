@@ -71,6 +71,9 @@ class Character:
                 self.vy = 0
                 self.on_ground = True
                 break
+        
+        
+
             
 
     
