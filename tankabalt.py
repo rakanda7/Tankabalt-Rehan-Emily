@@ -9,7 +9,7 @@ import time
 WIDTH, HEIGHT = 900, 650
 
 class Character:
-    def __init__(self, screen: pygame.Surface, y: int) -> None:
+    def __init__(self, screen: pygame.Surface, y: int, grounds) -> None:
         self.screen = screen
         self.radius = 15
         self.color = "#FEFEFE" 
@@ -122,7 +122,7 @@ def main():
     g_two = Ground(screen, 500)
     g_three = Ground(screen, 900)
     grounds = [g_one, g_two, g_three]
-    ball = Character(screen, 300)
+    ball = Character(screen, 300, grounds)
 
     state = "start"
 
