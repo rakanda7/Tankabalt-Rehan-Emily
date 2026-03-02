@@ -73,7 +73,7 @@ class Character:
                 break
 
     # reset 
-    def reset(self):
+    def reset(self) -> None:
         self.y = 500
         self.vy = 0
         self.on_ground = True
@@ -96,7 +96,7 @@ class Ground:
         self.vx = -8
         self.width = random.uniform(180,400)
 
-    def reset(self, x):
+    def reset(self, x) -> None:
         self.x = x
         self.width = random.uniform(180,400)
     
@@ -110,7 +110,19 @@ class Ground:
         pygame.draw.rect(self.screen, "#FF0000", (self.x, 500, self.width, 50))
 
 class Obstacle:
-    ...
+    
+    def __init__(self, screen: pygame.Surface, grounds) -> None:
+        self.screen = screen
+        self.grounds = grounds
+        self.color = "#0000FF"
+        self.y = 500
+
+
+    def update(self) -> None:
+        ...
+
+    def display(self) -> None:
+        ...
 
 def main():
     fps = 60
@@ -175,7 +187,7 @@ def main():
             if ball.y - ball.radius >= screen.get_height():
                 state = "game over"
         if state == "game over":
-            screen.fill("#7A2525")
+            screen.fill("#7A2525") #figure out how to ease it
 
         pygame.display.flip()
         fps_clock.tick(fps)
