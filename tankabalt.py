@@ -9,7 +9,7 @@ import time
 WIDTH, HEIGHT = 900, 650
 
 class Character:
-    def __init__(self, screen: pygame.Surface, y: int, grounds) -> None:
+    def __init__(self, screen: pygame.Surface, y: int) -> None:
         self.screen = screen
         self.radius = 15
         self.color = "#FEFEFE" 
