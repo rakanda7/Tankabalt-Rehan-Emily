@@ -38,6 +38,7 @@ class Character:
         self.vy = -self.jump_velocity
     
     def motion(self) -> None:
+        self.on_ground = False
         keys = pygame.key.get_pressed()
         up_pressed = keys[pygame.K_UP]
         just_pressed_up = up_pressed and not self.prev_up_pressed
@@ -48,8 +49,10 @@ class Character:
             self.jump()
 
         # apply gravity and move
+        prev_y = self.y
         self.vy += self.gravity
         self.y += self.vy
+        
 
         # limit max height (cannot leave screen)
         if self.y < self.radius:
@@ -74,6 +77,13 @@ class Character:
         #     self.on_ground = True
         #     self.jumps_left = self.extra_jumps
 
+    # reset 
+    def reset(self):
+        self.y = 500
+        self.vy = 0
+        self.on_ground = True
+        self.jumps_left = 1
+        self.extra_jumps = 1
     
     def update(self) -> None:
         self.motion()
@@ -88,9 +98,13 @@ class Ground:
     def __init__(self, screen: pygame.Surface, x:int) -> None:
         self.screen = screen
         self.x = x
-        self.vx = -5
+        self.vx = -8
         self.width = random.uniform(180,400)
 
+    def reset(self, x):
+        self.x = x
+        self.width = random.uniform(180,400)
+    
     def update(self) -> None:
         self.x += self.vx
         if self.x + self.width < 0:
@@ -112,7 +126,10 @@ def main():
     g_one = Ground(screen, 0)
     g_two = Ground(screen, 500)
     g_three = Ground(screen, 900)
-    ball = Character(screen, 300)
+    grounds = [g_one, g_two, g_three]
+    ball = Character(screen, 300, grounds)
+
+    state = "start"
 
     while True:
         screen.fill("#000000")
@@ -121,16 +138,49 @@ def main():
             if event.type == pygame.locals.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.locals.KEYDOWN:
+                if event.key == pygame.K_UP and state == "start":
+                    ball.reset()
+                    g_one.reset(0)
+                    g_two.reset(500)
+                    g_three.reset(900)
+                    state = "playing"
+                    g_one.update()
+                    g_one.display()
+                    g_two.update()
+                    g_two.display()
+                    g_three.update()
+                    g_three.display()
+                    ball.update()
+                    ball.display()
+                if event.key == pygame.K_UP and state == "game over":
+                    state = "start"
 
-        g_one.update()
-        g_one.display()
-        g_two.update()
-        g_two.display()
-        g_three.update()
-        g_three.display()
+        
+        if state == "start":
+            screen.fill("#0000FF")
+        if state == "playing":
+            screen.fill("#000000")
+            for i in grounds:
+                i.update()
+                i.display()
+            for g in grounds:
+                        if g.x + g.width <= 20:
 
-        ball.update()
-        ball.display()
+                            furthest = grounds[0]
+                            for platform in grounds:
+                                if platform.x + platform.width > furthest.x + furthest.width:
+                                    furthest = platform
+                            
+                            g.width = random.uniform(150, 400)
+                            g.x = furthest.x + furthest.width + random.uniform(120, 340)
+            ball.update()
+            ball.display()
+            
+            if ball.y - ball.radius >= screen.get_height():
+                state = "game over"
+        if state == "game over":
+            screen.fill("#7A2525")
 
         pygame.display.flip()
         fps_clock.tick(fps)
