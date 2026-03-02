@@ -99,7 +99,7 @@ class Bullet:
         self.vx = 14.0
 
     def update(self) -> None:
-        self.x += self.vy
+        self.x += self.vx
 
     def off_screen(self) -> bool:
         return self.x - self.radius > 600
