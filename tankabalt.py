@@ -172,8 +172,8 @@ def main():
                                 if platform.x + platform.width > furthest.x + furthest.width:
                                     furthest = platform
                             
-                            g.width = random.uniform(150, 400)
-                            g.x = furthest.x + furthest.width + random.uniform(120, 340)
+                            g.width = random.uniform(150, 320)
+                            g.x = furthest.x + furthest.width + random.uniform(120, 380)
             ball.update()
             ball.display()
             
