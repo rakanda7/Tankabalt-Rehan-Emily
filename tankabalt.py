@@ -93,11 +93,11 @@ class Ground:
     def __init__(self, screen: pygame.Surface, x:int) -> None:
         self.screen = screen
         self.x = x
-        self.vx = -5
+        self.vx = -8
         self.width = random.uniform(180,400)
 
-    def reset(self):
-        # self.x = x
+    def reset(self, x):
+        self.x = x
         self.width = random.uniform(180,400)
     
     def update(self) -> None:
@@ -136,9 +136,9 @@ def main():
             if event.type == pygame.locals.KEYDOWN:
                 if event.key == pygame.K_UP and state == "start":
                     ball.reset()
-                    g_one.reset()
-                    g_two.reset()
-                    g_three.reset()
+                    g_one.reset(0)
+                    g_two.reset(500)
+                    g_three.reset(900)
                     state = "playing"
                     g_one.update()
                     g_one.display()
@@ -156,14 +156,22 @@ def main():
             screen.fill("#0000FF")
         if state == "playing":
             screen.fill("#000000")
-            g_one.update()
-            g_one.display()
-            g_two.update()
-            g_two.display()
-            g_three.update()
-            g_three.display()
+            for i in grounds:
+                i.update()
+                i.display()
+            for g in grounds:
+                        if g.x + g.width <= 20:
+
+                            furthest = grounds[0]
+                            for platform in grounds:
+                                if platform.x + platform.width > furthest.x + furthest.width:
+                                    furthest = platform
+                            
+                            g.width = random.uniform(150, 400)
+                            g.x = furthest.x + furthest.width + random.uniform(120, 340)
             ball.update()
             ball.display()
+            
             if ball.y - ball.radius >= screen.get_height():
                 state = "game over"
         if state == "game over":
