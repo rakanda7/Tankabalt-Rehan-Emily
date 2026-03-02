@@ -122,7 +122,7 @@ def main():
     g_two = Ground(screen, 500)
     g_three = Ground(screen, 900)
     grounds = [g_one, g_two, g_three]
-    ball = Character(screen, 300, grounds)
+    ball = Character(screen, 300)
 
     state = "start"
 
