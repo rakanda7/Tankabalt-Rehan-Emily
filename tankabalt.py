@@ -88,6 +88,26 @@ class Character:
         pygame.draw.circle(self.screen, self.color, (self.x, self.y - self.radius), self.radius)
 
 
+class Bullet:
+    def __init__(self, ball, x: float, y: float) -> None:
+        self.ball = ball
+        self.radius = 5
+        self.color = "#FFD54A"
+
+        self.x = x
+        self.y = y
+        self.vx = 14.0
+
+    def update(self) -> None:
+        self.x += self.vy
+
+    def off_screen(self) -> bool:
+        return self.x - self.radius > 600
+    
+    def display(self) -> None:
+        pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.radius)
+
+
 class Ground:
     
     def __init__(self, screen: pygame.Surface, x:int) -> None:
