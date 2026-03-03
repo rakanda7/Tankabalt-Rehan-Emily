@@ -12,10 +12,8 @@ class Character:
     def __init__(self, screen: pygame.Surface, y: int, grounds) -> None:
         self.screen = screen
         self.radius = 15
-        self.color = "#FEFEFE" 
-        
+        self.color = "#FEFEFE"
         self.x = 50
-
         self.ground_y = 500
         self.y = 500
         self.vy = 0
@@ -37,6 +35,8 @@ class Character:
         self.bullet_radius = 5
 
         self.grounds = grounds
+
+        self.health = 9
 
     def jump(self) -> None:
         self.vy = -self.jump_velocity
@@ -72,8 +72,8 @@ class Character:
         self.y += self.vy
 
         # ceiling for ball
-        if self.y < self.radius:
-            self.y = self.radius
+        if self.y < 2 * self.radius:
+            self.y = 2 * self.radius
             if self.vy < 0:
                 self.vy = 0
         
@@ -190,6 +190,28 @@ class Obstacle:
     def display(self) -> None:
         pygame.draw.rect(self.screen, self.color, (self.x, self.y, self.width, self.height))
 
+class HealthBar:
+
+    def __init__(self, screen: pygame.Surface, ball) -> None:
+        self.screen = screen
+        self.color = "#F0EEEE"
+        self.ball = ball
+        self.square_size = 20
+        self.square_spacing = 10
+        self.y = 20
+
+    def update(self) -> None:
+        ...
+
+    def display(self) -> None:
+        for i in range(10):
+            self.x = 30 + i * (self.square_size + self.square_spacing)
+            if i < self.ball.health:
+                self.color = "#F0EEEE"
+            else:
+                self.color = "#444444"
+            pygame.draw.rect(self.screen, self.color, (self.x, self.y, 20, 20))
+
 def main():
     fps = 60
     fps_clock = pygame.time.Clock()
@@ -204,6 +226,7 @@ def main():
     grounds = [g_one, g_two, g_three]
     ball = Character(screen, 300, grounds)
     obstacles = [Obstacle(screen, grounds, random.randrange(300, 901)) for i in range(0,5)]
+    health_bar = HealthBar(screen, ball)
 
     state = "start"
 
@@ -229,6 +252,8 @@ def main():
                     g_three.display()
                     ball.update()
                     ball.display()
+                    # health_bar.update()
+                    # health_bar.display()
                 if event.key == pygame.K_UP and state == "game over":
                     state = "start"
 
@@ -266,6 +291,8 @@ def main():
                             g.x = furthest.x + furthest.width + random.uniform(120, 340)
             ball.update()
             ball.display()
+            health_bar.update()
+            health_bar.display()
             for o in obstacles:
                 o.update()
                 o.display()
