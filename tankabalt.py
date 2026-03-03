@@ -29,14 +29,14 @@ class Character:
 
         self.bullets: list[Bullet] = []
 
-        self.bullet_count = 10
         self.bullet_spacing = 12
         self.bullet_velocity = 15.0
         self.bullet_radius = 5
 
         self.grounds = grounds
 
-        self.health = 9
+        self.health = 10
+        self.damage_cooldown = 0
 
     def jump(self) -> None:
         self.vy = -self.jump_velocity
@@ -107,9 +107,13 @@ class Character:
         self.on_ground = True
         self.jumps_left = 1
         self.extra_jumps = 1
+        self.health = 10
     
     def update(self) -> None:
         self.motion()
+
+        if self.damage_cooldown > 0:
+            self.damage_cooldown -= 1
 
         for b in self.bullets:
             b.update()
@@ -134,6 +138,8 @@ class Bullet:
 
     def update(self) -> None:
         self.x += self.vx
+        if self.x - self.radius >= 650:
+            del self
 
     def off_screen(self) -> bool:
         return self.x - self.radius > 600
@@ -232,8 +238,9 @@ def main():
     g_two = Ground(screen, 500)
     g_three = Ground(screen, 900)
     grounds = [g_one, g_two, g_three]
-    ball = Character(screen, 300, grounds)
     obstacles = [Obstacle(screen, grounds, random.randrange(300, 901)) for i in range(0,5)]
+    
+    ball = Character(screen, 300, grounds)
     health_bar = HealthBar(screen, ball)
 
     state = "start"
@@ -260,8 +267,6 @@ def main():
                     g_three.display()
                     ball.update()
                     ball.display()
-                    # health_bar.update()
-                    # health_bar.display()
                 if event.key == pygame.K_UP and state == "game over":
                     state = "start"
 
@@ -304,6 +309,20 @@ def main():
             for o in obstacles:
                 o.update()
                 o.display()
+
+                player_right = ball.x + ball.radius
+                player_up = ball.y - ball.radius
+                player_down = ball.y + ball.radius
+                obstacle_down = o.y + o.height
+
+                if(
+                    player_right >= o.x and
+                    player_up <= obstacle_down and
+                    player_down >= o.y 
+                ) and ball.damage_cooldown == 0:
+                    ball.health -= 1
+                    ball.damage_cooldown = 30
+
                 if o.off_screen():
                     farthest = obstacles[0]
                     for obs in obstacles:
@@ -363,6 +382,8 @@ def main():
                     obstacles.remove(o)
             
             if ball.y - ball.radius >= screen.get_height():
+                state = "game over"
+            elif ball.health <= 0:
                 state = "game over"
         if state == "game over":
             screen.fill("#7A2525") #figure out how to ease it
