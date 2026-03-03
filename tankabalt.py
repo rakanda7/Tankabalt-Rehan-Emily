@@ -163,14 +163,18 @@ class Obstacle:
         self.screen = screen
         self.grounds = grounds
         self.color = "#0000FF"
-        self.y = 500
-
+        self.y = random.randrange(0, 401, 10)  # self.y is bottom of object from our perspective
+        self.width = 50
+        self.height = random.randrange(20, 101)
+        self.vx = -8
+        for g in grounds:
+            self.x = random.uniform(g.x, g.x + g.width - 50)
 
     def update(self) -> None:
-        ...
+        self.x += self.vx
 
     def display(self) -> None:
-        ...
+        pygame.draw.rect(self.screen, self.color, (self.x, self.y, self.width, self.height))
 
 def main():
     fps = 60
@@ -183,6 +187,7 @@ def main():
     g_three = Ground(screen, 900)
     grounds = [g_one, g_two, g_three]
     ball = Character(screen, 300, grounds)
+    obstacle_one = Obstacle(screen, grounds)
 
     state = "start"
 
