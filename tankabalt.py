@@ -163,15 +163,23 @@ class Obstacle:
         self.screen = screen
         self.grounds = grounds
         self.color = "#0000FF"
-        # self.y = random.randrange(0, 401, 10)  # self.y is bottom of object from our perspective
         self.width = 40
-        self.height = random.randrange(40, 120)
         self.vx = -8
-        for g in grounds:
-            self.x = random.uniform(g.x, g.x + g.width - 50)
+        self.x = x
+        self.height = random.randrange(30, 120)
+
+        if random.random() < 0.3:
+            ground = random.choice(self.grounds)
+            self.x = random.uniform(ground.x, ground.x + ground.width - self.width)
+            self.y = 500 - self.height
+        else:
+            self.y = random.randrange(0, 450 - self.height)
 
     def update(self) -> None:
         self.x += self.vx
+
+    def off_screen(self) -> bool:
+        return self.x + self.width <= 0
 
     def display(self) -> None:
         pygame.draw.rect(self.screen, self.color, (self.x, self.y, self.width, self.height))
@@ -189,6 +197,7 @@ def main():
     g_three = Ground(screen, 900)
     grounds = [g_one, g_two, g_three]
     ball = Character(screen, 300, grounds)
+    obstacles = [Obstacle(screen, grounds, random.randrange(300, 901)) for i in range(0,5)]
 
     state = "start"
 
@@ -251,6 +260,22 @@ def main():
                             g.x = furthest.x + furthest.width + random.uniform(120, 340)
             ball.update()
             ball.display()
+            for o in obstacles:
+                o.update()
+                o.display()
+                if o.off_screen():
+                    farthest = obstacles[0]
+                    for obs in obstacles:
+                        if obs.x > farthest.x:
+                            farthest = obs
+                    o.x = farthest.x + farthest.width + random.randint(50,250)
+                    o.height = random.randint(30,120)
+                    
+                    if random.random() < 0.3:
+                        ground = random.choice(grounds)
+                        o.y = 500 - o.height
+                    else:
+                        o.y = random.randrange(0, 450 - o.height)
             
             if ball.y - ball.radius >= screen.get_height():
                 state = "game over"
