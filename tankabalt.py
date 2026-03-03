@@ -70,6 +70,12 @@ class Character:
         prev_y = self.y
         self.vy += self.gravity
         self.y += self.vy
+
+        # ceiling for ball
+        if self.y < self.radius:
+            self.y = self.radius
+            if self.vy < 0:
+                self.vy = 0
         
         # press space bar to shoot bullets
         space_pressed = keys[pygame.K_SPACE]
