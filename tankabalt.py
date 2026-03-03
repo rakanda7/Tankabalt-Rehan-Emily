@@ -27,12 +27,30 @@ class Character:
         self.jumps_left = 1
 
         self.prev_up_pressed = False
+        self.prev_space_pressed = False
+
+        self.bullets: list[Bullet] = []
+
+        self.bullet_count = 10
+        self.bullet_spacing = 12
+        self.bullet_velocity = 15.0
+        self.bullet_radius = 5
 
         self.grounds = grounds
 
     def jump(self) -> None:
         self.vy = -self.jump_velocity
         self.on_ground = False
+
+    def shoot_bullet(self) -> None:
+        bullet_x = self.x + self.radius + self.bullet_radius * 2
+        bullet_y = self.y - self.radius
+
+        for i in self.bullet_count:
+            b_x = bullet_x - i * self.bullet_spacing
+            b_y = bullet_y
+            self.bullets.append(Bullet(b_x, b_y))
+        
     
     def motion(self) -> None:
         self.on_ground = False
@@ -56,6 +74,13 @@ class Character:
         self.vy += self.gravity
         self.y += self.vy
         
+        # press space bar to shoot bullets
+        space_pressed = keys[pygame.K_SPACE]
+        just_pressed_space = space_pressed and not self.prev_space_pressed
+        self.prev_space_pressed = space_pressed
+
+        if just_pressed_space:
+            self.shoot_bullet( )
 
         # ground collision
         
@@ -83,14 +108,19 @@ class Character:
     def update(self) -> None:
         self.motion()
 
+        for b in self.bullets:
+            b.update()
+
 
     def display(self) -> None:
         pygame.draw.circle(self.screen, self.color, (self.x, self.y - self.radius), self.radius)
 
+        for b in self.bullets:
+            b.display() 
+
 
 class Bullet:
-    def __init__(self, ball, x: float, y: float) -> None:
-        self.ball = ball
+    def __init__(self, x: float, y: float) -> None:
         self.radius = 5
         self.color = "#FFD54A"
 
