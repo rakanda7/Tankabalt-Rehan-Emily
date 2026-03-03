@@ -180,6 +180,8 @@ def main():
     fps = 60
     fps_clock = pygame.time.Clock()
     pygame.init()
+    title_font = pygame.font.SysFont('arial', 72, bold=True)
+    subtitle_font = pygame.font.SysFont('arial', 28)
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
     g_one = Ground(screen, 0)
@@ -219,6 +221,16 @@ def main():
         
         if state == "start":
             screen.fill("#0000FF")
+            
+            title_writing = title_font.render("START GAME", True, "#FFFFFF")
+            title_outline = title_writing.get_rect(center = (450, 300))
+
+            subtitle_writing = subtitle_font.render("Press Space to Shoot", True, "#FFFFFF")
+            subtitle_outline = subtitle_writing.get_rect(center=(450, 375))
+
+            screen.blit(title_writing, title_outline)
+            screen.blit(subtitle_writing, subtitle_outline)
+
         if state == "playing":
             screen.fill("#000000")
             for i in grounds:
