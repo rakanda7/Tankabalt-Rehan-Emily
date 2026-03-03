@@ -71,6 +71,7 @@ class Character:
         self.vy += self.gravity
         self.y += self.vy
 
+        # ceiling for ball
         if self.y < self.radius:
             self.y = self.radius
             if self.vy < 0:
