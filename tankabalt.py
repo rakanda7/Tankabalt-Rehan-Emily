@@ -174,12 +174,20 @@ class Obstacle:
         self.x = x
         self.height = random.randrange(30, 120)
 
+        self.health = 3
+
         if random.random() < 0.3:
             ground = random.choice(self.grounds)
             self.x = random.uniform(ground.x, ground.x + ground.width - self.width)
             self.y = 500 - self.height
         else:
             self.y = random.randrange(0, 450 - self.height)
+    
+    def hit(self) -> None:
+        self.health -= 1
+    
+    def removed(self) -> bool:
+        return self.health <= 0
 
     def update(self) -> None:
         self.x += self.vx
@@ -282,6 +290,50 @@ def main():
                         o.y = 500 - o.height
                     else:
                         o.y = random.randrange(0, 450 - o.height)
+            
+            bullets_to_remove = []
+            obstacles_to_remove = []
+
+            for b in ball.bullets:
+                for o in obstacles:
+                    bullet_left = b.x - b.radius
+                    bullet_right = b.x + b.radius
+                    bullet_top = b.y - b.radius
+                    bullet_bottom = b.y + b.radius
+
+                    obstacle_left = o.x
+                    obstacle_right = o.x + o.width
+                    obstacle_top = o.y  
+                    obstacle_bottom = o.y +  o.height
+
+                    if (bullet_right >= obstacle_left and bullet_left <= obstacle_right and
+                        bullet_top <= obstacle_bottom and bullet_bottom >= obstacle_top):
+                        o.hit()
+                        bullets_to_remove.append(b)
+
+                        if o.removed():
+                            farthest = obstacles[0]
+                            for obs in obstacles:
+                                if obs.x > farthest.x:
+                                    farthest = obs
+                            o.x = farthest.x + farthest.width + random.randint(50,250)
+                            o.height = random.randint(30,120)
+                    
+                            if random.random() < 0.3:
+                                ground = random.choice(grounds)
+                                o.y = 500 - o.height
+                            else:
+                                o.y = random.randrange(0, 450 - o.height)
+
+                        
+            
+            for b in bullets_to_remove:
+                if b in ball.bullets:
+                    ball.bullets.remove(b)
+            
+            for o in obstacles_to_remove:
+                if o in obstacles:
+                    obstacles.remove(o)
             
             if ball.y - ball.radius >= screen.get_height():
                 state = "game over"
