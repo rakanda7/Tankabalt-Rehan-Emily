@@ -224,11 +224,15 @@ def main():
             title_writing = title_font.render("START GAME", True, "#FFFFFF")
             title_outline = title_writing.get_rect(center = (450, 300))
 
-            subtitle_writing = subtitle_font.render("Press Space to Shoot", True, "#FFFFFF")
-            subtitle_outline = subtitle_writing.get_rect(center=(450, 375))
+            subtitle1_writing = subtitle_font.render("Press Up to Start", True, "#FFFFFF")
+            subtitle1_outline = subtitle1_writing.get_rect(center=(450, 375))
+
+            subtitle2_writing = subtitle_font.render("Press Space to Shoot", True, "#FFFFFF")
+            subtitle2_outline = subtitle2_writing.get_rect(center=(450, 425))
 
             screen.blit(title_writing, title_outline)
-            screen.blit(subtitle_writing, subtitle_outline)
+            screen.blit(subtitle1_writing, subtitle1_outline)
+            screen.blit(subtitle2_writing, subtitle2_outline)
 
         if state == "playing":
             screen.fill("#000000")
@@ -252,6 +256,10 @@ def main():
                 state = "game over"
         if state == "game over":
             screen.fill("#7A2525") #figure out how to ease it
+
+            ending_writing = title_font.render("GAME OVER", True, "#FFFFFF")
+            ending_outline = ending_writing.get_rect(center=(450, 325))
+            screen.blit(ending_writing, ending_outline)
 
         pygame.display.flip()
         fps_clock.tick(fps)
