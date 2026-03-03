@@ -224,9 +224,13 @@ def main():
     fps = 60
     fps_clock = pygame.time.Clock()
     pygame.init()
+
     title_font = pygame.font.SysFont('arial', 72, bold=True)
     subtitle_font = pygame.font.SysFont('arial', 28)
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+    score = 0
+    score_font = pygame.font.SysFont('arial', 28, bold=True)
 
     g_one = Ground(screen, 0)
     g_two = Ground(screen, 500)
@@ -339,6 +343,8 @@ def main():
                         bullets_to_remove.append(b)
 
                         if o.removed():
+                            score += 1
+
                             farthest = obstacles[0]
                             for obs in obstacles:
                                 if obs.x > farthest.x:
@@ -361,6 +367,13 @@ def main():
             for o in obstacles_to_remove:
                 if o in obstacles:
                     obstacles.remove(o)
+
+            score_text = score_font.render(f"SCORE: {score}", True, "#FFFFFF")
+            box = score_text.get_rect(topright=(880, 20))
+
+            pygame.draw.rect(screen, "#000000", box)
+            # pygame.draw.rect(screen, "#FFFFFF", box, 3)
+            screen.blit(score_text, box)
             
             if ball.y - ball.radius >= screen.get_height():
                 state = "game over"
