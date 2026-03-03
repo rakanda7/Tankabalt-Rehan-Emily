@@ -19,7 +19,6 @@ class Character:
         self.vy = 0
         self.jump_velocity = 18
         self.gravity = 1
-        self.on_ground = True
 
         self.extra_jumps = 1
         self.jumps_left = 1
@@ -40,7 +39,6 @@ class Character:
 
     def jump(self) -> None:
         self.vy = -self.jump_velocity
-        self.on_ground = False
 
     def shoot_bullet(self) -> None:
         bullet_x = self.x + self.radius + self.bullet_radius * 2
@@ -48,7 +46,6 @@ class Character:
 
         self.bullets.append(Bullet(self.screen, bullet_x, bullet_y))
         
-    
     def motion(self) -> None:
         self.on_ground = False
         keys = pygame.key.get_pressed()
@@ -230,9 +227,13 @@ def main():
     fps = 60
     fps_clock = pygame.time.Clock()
     pygame.init()
+
     title_font = pygame.font.SysFont('arial', 72, bold=True)
     subtitle_font = pygame.font.SysFont('arial', 28)
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+    score = 0
+    score_font = pygame.font.SysFont('arial', 28, bold=True)
 
     g_one = Ground(screen, 0)
     g_two = Ground(screen, 500)
@@ -342,22 +343,18 @@ def main():
 
             for b in ball.bullets:
                 for o in obstacles:
-                    bullet_left = b.x - b.radius
                     bullet_right = b.x + b.radius
                     bullet_top = b.y - b.radius
                     bullet_bottom = b.y + b.radius
 
-                    obstacle_left = o.x
-                    obstacle_right = o.x + o.width
-                    obstacle_top = o.y  
-                    obstacle_bottom = o.y +  o.height
-
-                    if (bullet_right >= obstacle_left and bullet_left <= obstacle_right and
-                        bullet_top <= obstacle_bottom and bullet_bottom >= obstacle_top):
+                    if (bullet_right >= o.x and
+                        bullet_top <= o.y + o.height and bullet_bottom >= o.y):
                         o.hit()
                         bullets_to_remove.append(b)
 
                         if o.removed():
+                            score += 1
+
                             farthest = obstacles[0]
                             for obs in obstacles:
                                 if obs.x > farthest.x:
@@ -380,6 +377,13 @@ def main():
             for o in obstacles_to_remove:
                 if o in obstacles:
                     obstacles.remove(o)
+
+            score_text = score_font.render(f"SCORE: {score}", True, "#FFFFFF")
+            box = score_text.get_rect(topright=(880, 20))
+
+            pygame.draw.rect(screen, "#000000", box)
+            # pygame.draw.rect(screen, "#FFFFFF", box, 3)
+            screen.blit(score_text, box)
             
             if ball.y - ball.radius >= screen.get_height():
                 state = "game over"
