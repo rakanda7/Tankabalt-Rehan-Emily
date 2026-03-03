@@ -46,10 +46,10 @@ class Character:
         bullet_x = self.x + self.radius + self.bullet_radius * 2
         bullet_y = self.y - self.radius
 
-        for i in self.bullet_count:
+        for i in range(self.bullet_count):
             b_x = bullet_x - i * self.bullet_spacing
             b_y = bullet_y
-            self.bullets.append(Bullet(b_x, b_y))
+            self.bullets.append(Bullet(self.screen, b_x, b_y))
         
     
     def motion(self) -> None:
@@ -120,7 +120,8 @@ class Character:
 
 
 class Bullet:
-    def __init__(self, x: float, y: float) -> None:
+    def __init__(self, screen: pygame.Surface, x: float, y: float) -> None:
+        self.screen = screen
         self.radius = 5
         self.color = "#FFD54A"
 
