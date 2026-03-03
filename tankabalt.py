@@ -19,7 +19,6 @@ class Character:
         self.vy = 0
         self.jump_velocity = 18
         self.gravity = 1
-        self.on_ground = True
 
         self.extra_jumps = 1
         self.jumps_left = 1
@@ -40,7 +39,6 @@ class Character:
 
     def jump(self) -> None:
         self.vy = -self.jump_velocity
-        self.on_ground = False
 
     def shoot_bullet(self) -> None:
         bullet_x = self.x + self.radius + self.bullet_radius * 2
@@ -48,7 +46,6 @@ class Character:
 
         self.bullets.append(Bullet(self.screen, bullet_x, bullet_y))
         
-    
     def motion(self) -> None:
         self.on_ground = False
         keys = pygame.key.get_pressed()
@@ -327,18 +324,12 @@ def main():
 
             for b in ball.bullets:
                 for o in obstacles:
-                    bullet_left = b.x - b.radius
                     bullet_right = b.x + b.radius
                     bullet_top = b.y - b.radius
                     bullet_bottom = b.y + b.radius
 
-                    obstacle_left = o.x
-                    obstacle_right = o.x + o.width
-                    obstacle_top = o.y  
-                    obstacle_bottom = o.y +  o.height
-
-                    if (bullet_right >= obstacle_left and bullet_left <= obstacle_right and
-                        bullet_top <= obstacle_bottom and bullet_bottom >= obstacle_top):
+                    if (bullet_right >= o.x and
+                        bullet_top <= o.y + o.height and bullet_bottom >= o.y):
                         o.hit()
                         bullets_to_remove.append(b)
 
