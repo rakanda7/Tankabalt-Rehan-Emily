@@ -159,7 +159,7 @@ class Ground:
 
 class Obstacle:
     
-    def __init__(self, screen: pygame.Surface, grounds) -> None:
+    def __init__(self, screen: pygame.Surface, grounds, x:float) -> None:
         self.screen = screen
         self.grounds = grounds
         self.color = "#0000FF"
@@ -189,7 +189,6 @@ def main():
     g_three = Ground(screen, 900)
     grounds = [g_one, g_two, g_three]
     ball = Character(screen, 300, grounds)
-    obstacle_one = Obstacle(screen, grounds)
 
     state = "start"
 
@@ -215,8 +214,6 @@ def main():
                     g_three.display()
                     ball.update()
                     ball.display()
-                    obstacle_one.update()
-                    obstacle_one.display()
                 if event.key == pygame.K_UP and state == "game over":
                     state = "start"
 
