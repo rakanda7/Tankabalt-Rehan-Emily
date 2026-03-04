@@ -232,6 +232,7 @@ def main():
     subtitle_font = pygame.font.Font('Jersey10-Regular.ttf', 28)
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
+    frames = 0
     score = 0
     score_font = pygame.font.Font('Jersey10-Regular.ttf', 28)
 
@@ -290,6 +291,10 @@ def main():
             screen.blit(subtitle2_writing, subtitle2_outline)
 
         if state == "playing":
+            frames += 1
+            if frames >= 60:
+                score += 1
+                frames = 0
             screen.fill("#000000")
             for i in grounds:
                 i.update()
