@@ -179,7 +179,7 @@ class Obstacle:
 
         self.health = 3
 
-        if random.random() < 0.3:
+        if random.random() < 0.4:
             ground = random.choice(self.grounds)
             self.x = random.uniform(ground.x, ground.x + ground.width - self.width)
             self.y = 500 - self.height
