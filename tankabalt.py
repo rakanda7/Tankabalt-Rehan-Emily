@@ -20,8 +20,8 @@ class Character:
         self.jump_velocity = 18
         self.gravity = 1
 
-        self.extra_jumps = 1
-        self.jumps_left = 1
+        self.max_jumps = 3
+        self.jumps_left = self.max_jumps
 
         self.prev_up_pressed = False
         self.prev_space_pressed = False
@@ -51,18 +51,13 @@ class Character:
         keys = pygame.key.get_pressed()
         up_pressed = keys[pygame.K_UP]
         just_pressed_up = up_pressed and not self.prev_up_pressed
-        
         self.prev_up_pressed = up_pressed
 
         # jumping (re-jumps mid-air if up pressed)
-        if just_pressed_up:
-            if self.on_ground:
-                self.jump()
-            elif self.jumps_left > 0:
-                self.jump()
-                self.jumps_left -= 1
-        self.jumps_left = self.extra_jumps
-
+        if just_pressed_up and self.jumps_left > 0:
+            self.jump()
+            self.jumps_left -= 1
+        
         # apply gravity and move
         prev_y = self.y
         self.vy += self.gravity
@@ -95,6 +90,7 @@ class Character:
                 self.y = 500
                 self.vy = 0
                 self.on_ground = True
+                self.jumps_left = self.max_jumps
                 break
 
     # reset 
@@ -105,6 +101,7 @@ class Character:
         self.jumps_left = 1
         self.extra_jumps = 1
         self.health = 10
+        self.jumps_left = self.max_jumps
     
     def update(self) -> None:
         self.motion()
@@ -112,8 +109,14 @@ class Character:
         if self.damage_cooldown > 0:
             self.damage_cooldown -= 1
 
+        remove_bullets = []
         for b in self.bullets:
             b.update()
+            if b.off_screen():
+                remove_bullets.append(b)
+            
+        for bul in remove_bullets: 
+            self.bullets.remove(bul)
 
 
     def display(self) -> None:
@@ -135,8 +138,6 @@ class Bullet:
 
     def update(self) -> None:
         self.x += self.vx
-        if self.x - self.radius >= 650:
-            del self
 
     def off_screen(self) -> bool:
         return self.x - self.radius > 600
@@ -151,16 +152,16 @@ class Ground:
         self.screen = screen
         self.x = x
         self.vx = -8
-        self.width = random.uniform(180,400)
+        self.width = random.uniform(200,400)
 
     def reset(self, x) -> None:
         self.x = x
-        self.width = random.uniform(180,400)
+        self.width = random.uniform(200,400)
     
     def update(self) -> None:
         self.x += self.vx
         if self.x + self.width < 0:
-            self.width = random.uniform(180,400)
+            self.width = random.uniform(200,400)
             self.x = 800 + self.width
 
     def display(self) -> None:
@@ -175,7 +176,7 @@ class Obstacle:
         self.width = 40
         self.vx = -8
         self.x = x
-        self.height = random.randrange(30, 120)
+        self.height = random.randrange(50, 80)
 
         self.health = 3
 
@@ -232,6 +233,7 @@ def main():
     subtitle_font = pygame.font.Font('Jersey10-Regular.ttf', 28)
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
+    frames = 0
     score = 0
     score_font = pygame.font.Font('Jersey10-Regular.ttf', 28)
 
@@ -239,7 +241,7 @@ def main():
     g_two = Ground(screen, 500)
     g_three = Ground(screen, 900)
     grounds = [g_one, g_two, g_three]
-    obstacles = [Obstacle(screen, grounds, random.randrange(300, 901)) for i in range(0,5)]
+    obstacles = [Obstacle(screen, grounds, random.randint(300, 900)) for i in range(0,5)]
     
     ball = Character(screen, 300, grounds)
     health_bar = HealthBar(screen, ball)
@@ -279,17 +281,29 @@ def main():
             title_writing = title_font.render("Tankabalt", True, "#FFFFFF")
             title_outline = title_writing.get_rect(center = (450, 300))
 
-            subtitle1_writing = subtitle_font.render("Press Up to Start", True, "#FFFFFF")
+            subtitle1_writing = subtitle_font.render("Press Up to Start/Jump", True, "#FFFFFF")
             subtitle1_outline = subtitle1_writing.get_rect(center=(450, 375))
 
             subtitle2_writing = subtitle_font.render("Press Space to Shoot", True, "#FFFFFF")
-            subtitle2_outline = subtitle2_writing.get_rect(center=(450, 425))
+            subtitle2_outline = subtitle2_writing.get_rect(center=(450, 400))
+
+            subtitle3_writing = subtitle_font.render("Obstacles take 3 bullets", True, "#FFFFFF")
+            subtitle3_outline = subtitle3_writing.get_rect(center = (450, 425))
+
+            subtitle4_writing = subtitle_font.render("1 jump and 2 double jumps per jump", True, "#FFFFFF")
+            subtitle4_outline = subtitle4_writing.get_rect(center = (450,450))
 
             screen.blit(title_writing, title_outline)
             screen.blit(subtitle1_writing, subtitle1_outline)
             screen.blit(subtitle2_writing, subtitle2_outline)
+            screen.blit(subtitle3_writing, subtitle3_outline)
+            screen.blit(subtitle4_writing,subtitle4_outline)
 
         if state == "playing":
+            frames += 1
+            if frames >= 60:
+                score += 1
+                frames = 0
             screen.fill("#000000")
             for i in grounds:
                 i.update()
@@ -331,7 +345,7 @@ def main():
                         if obs.x > farthest.x:
                             farthest = obs
                     o.x = farthest.x + farthest.width + random.randint(50,250)
-                    o.height = random.randint(30,120)
+                    o.height = random.randint(50,80)
                     
                     if random.random() < 0.3:
                         ground = random.choice(grounds)
@@ -362,7 +376,7 @@ def main():
                                 if obs.x > farthest.x:
                                     farthest = obs
                             o.x = farthest.x + farthest.width + random.randint(50,250)
-                            o.height = random.randint(30,120)
+                            o.height = random.randint(50,80)
                             o.health = 3
                     
                             if random.random() < 0.3:
@@ -400,6 +414,9 @@ def main():
             ending_writing = title_font.render("GAME OVER", True, "#FFFFFF")
             ending_outline = ending_writing.get_rect(center=(450, 325))
             screen.blit(ending_writing, ending_outline)
+            ending_score = title_font.render(f"Total Score: {score}", True, "#FFFFFF")
+            ending_score_outline = ending_score.get_rect(center = (450, 400))
+            screen.blit(ending_score, ending_score_outline)
 
         pygame.display.flip()
         fps_clock.tick(fps)
