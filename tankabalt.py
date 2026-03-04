@@ -228,12 +228,12 @@ def main():
     fps_clock = pygame.time.Clock()
     pygame.init()
 
-    title_font = pygame.font.SysFont('arial', 72, bold=True)
-    subtitle_font = pygame.font.SysFont('arial', 28)
+    title_font = pygame.font.Font("Cyber Alert.otf", 72)
+    subtitle_font = pygame.font.Font('Jersey10-Regular.ttf', 28)
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
     score = 0
-    score_font = pygame.font.SysFont('arial', 28, bold=True)
+    score_font = pygame.font.Font('Jersey10-Regular.ttf', 28)
 
     g_one = Ground(screen, 0)
     g_two = Ground(screen, 500)
@@ -273,9 +273,9 @@ def main():
 
         
         if state == "start":
-            screen.fill("#0000FF")
+            screen.fill("#691CC1")
             
-            title_writing = title_font.render("START GAME", True, "#FFFFFF")
+            title_writing = title_font.render("Tankabalt", True, "#FFFFFF")
             title_outline = title_writing.get_rect(center = (450, 300))
 
             subtitle1_writing = subtitle_font.render("Press Up to Start", True, "#FFFFFF")
