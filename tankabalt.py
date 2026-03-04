@@ -20,8 +20,8 @@ class Character:
         self.jump_velocity = 18
         self.gravity = 1
 
-        self.extra_jumps = 1
-        self.jumps_left = 1
+        self.max_jumps = 3
+        self.jumps_left = self.max_jumps
 
         self.prev_up_pressed = False
         self.prev_space_pressed = False
@@ -51,18 +51,13 @@ class Character:
         keys = pygame.key.get_pressed()
         up_pressed = keys[pygame.K_UP]
         just_pressed_up = up_pressed and not self.prev_up_pressed
-        
         self.prev_up_pressed = up_pressed
 
         # jumping (re-jumps mid-air if up pressed)
-        if just_pressed_up:
-            if self.on_ground:
-                self.jump()
-            elif self.jumps_left > 0:
-                self.jump()
-                self.jumps_left -= 1
-        self.jumps_left = self.extra_jumps
-
+        if just_pressed_up and self.jumps_left > 0:
+            self.jump()
+            self.jumps_left -= 1
+        
         # apply gravity and move
         prev_y = self.y
         self.vy += self.gravity
@@ -95,6 +90,7 @@ class Character:
                 self.y = 500
                 self.vy = 0
                 self.on_ground = True
+                self.jumps_left = self.max_jumps
                 break
 
     # reset 
@@ -105,6 +101,7 @@ class Character:
         self.jumps_left = 1
         self.extra_jumps = 1
         self.health = 10
+        self.jumps_left = self.max_jumps
     
     def update(self) -> None:
         self.motion()
@@ -112,8 +109,14 @@ class Character:
         if self.damage_cooldown > 0:
             self.damage_cooldown -= 1
 
+        bullets_to_remove = []
         for b in self.bullets:
             b.update()
+            if b.off_screen():
+                bullets_to_remove.append(b)
+            
+        for bul in bullets_to_remove: 
+            bullets_to_remove.remove(bul)
 
 
     def display(self) -> None:
@@ -135,8 +138,6 @@ class Bullet:
 
     def update(self) -> None:
         self.x += self.vx
-        if self.x - self.radius >= 650:
-            del self
 
     def off_screen(self) -> bool:
         return self.x - self.radius > 600
@@ -175,7 +176,7 @@ class Obstacle:
         self.width = 40
         self.vx = -8
         self.x = x
-        self.height = random.randrange(30, 120)
+        self.height = random.randrange(50, 80)
 
         self.health = 3
 
@@ -280,15 +281,23 @@ def main():
             title_writing = title_font.render("Tankabalt", True, "#FFFFFF")
             title_outline = title_writing.get_rect(center = (450, 300))
 
-            subtitle1_writing = subtitle_font.render("Press Up to Start", True, "#FFFFFF")
+            subtitle1_writing = subtitle_font.render("Press Up to Start/Jump", True, "#FFFFFF")
             subtitle1_outline = subtitle1_writing.get_rect(center=(450, 375))
 
             subtitle2_writing = subtitle_font.render("Press Space to Shoot", True, "#FFFFFF")
-            subtitle2_outline = subtitle2_writing.get_rect(center=(450, 425))
+            subtitle2_outline = subtitle2_writing.get_rect(center=(450, 400))
+
+            subtitle3_writing = subtitle_font.render("Obstacles take 3 bullets", True, "#FFFFFF")
+            subtitle3_outline = subtitle3_writing.get_rect(center = (450, 425))
+
+            subtitle4_writing = subtitle_font.render("1 jump and 2 double jumps per jump", True, "#FFFFFF")
+            subtitle4_outline = subtitle4_writing.get_rect(center = (450,450))
 
             screen.blit(title_writing, title_outline)
             screen.blit(subtitle1_writing, subtitle1_outline)
             screen.blit(subtitle2_writing, subtitle2_outline)
+            screen.blit(subtitle3_writing, subtitle3_outline)
+            screen.blit(subtitle4_writing,subtitle4_outline)
 
         if state == "playing":
             frames += 1
