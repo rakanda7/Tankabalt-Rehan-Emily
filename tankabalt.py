@@ -3,7 +3,6 @@ import sys
 import pygame
 import pygame.locals
 import random
-import time
 
 
 WIDTH, HEIGHT = 900, 650
