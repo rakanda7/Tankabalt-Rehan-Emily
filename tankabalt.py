@@ -368,7 +368,7 @@ def main():
 
                         if o.removed():
                             score += 1
-                            o.health = 3
+                            # o.health = 3
 
                             farthest = obstacles[0]
                             for obs in obstacles:
@@ -376,12 +376,15 @@ def main():
                                     farthest = obs
                             o.x = farthest.x + farthest.width + random.randint(50,250)
                             o.height = random.randint(50,80)
+                            o.health = 3
                     
                             if random.random() < 0.3:
                                 ground = random.choice(grounds)
                                 o.y = 500 - o.height
                             else:
                                 o.y = random.randrange(0, 450 - o.height)
+                        
+                        # o.health = 3
 
                         
             
