@@ -395,6 +395,9 @@ def main():
             ending_writing = title_font.render("GAME OVER", True, "#FFFFFF")
             ending_outline = ending_writing.get_rect(center=(450, 325))
             screen.blit(ending_writing, ending_outline)
+            ending_score = title_font.render(f"Total Score: {score}", True, "#FFFFFF")
+            ending_score_outline = ending_score.get_rect(center = (450, 400))
+            screen.blit(ending_score, ending_score_outline)
 
         pygame.display.flip()
         fps_clock.tick(fps)
