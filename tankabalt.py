@@ -255,6 +255,7 @@ def main():
                 sys.exit()
             if event.type == pygame.locals.KEYDOWN:
                 if event.key == pygame.K_UP and state == "start":
+                    score = 0
                     ball.reset()
                     g_one.reset(0)
                     g_two.reset(500)
@@ -354,6 +355,7 @@ def main():
 
                         if o.removed():
                             score += 1
+                            o.health = 3
 
                             farthest = obstacles[0]
                             for obs in obstacles:
